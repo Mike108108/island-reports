@@ -52,6 +52,7 @@
             padding: 20px;
             background: #f8f9fa;
             border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -139,6 +140,8 @@
             font-weight: 600;
             transition: all 0.3s ease;
             -webkit-appearance: none;
+            margin-right: 10px;
+            margin-bottom: 10px;
         }
 
         .btn:hover {
@@ -150,6 +153,22 @@
             background: #6c757d;
             cursor: not-allowed;
             transform: none;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
         }
 
         .problems-grid {
@@ -311,22 +330,50 @@
         .days-3 { background: #fab1a0; color: #721c24; }
         .days-4 { background: #ff7675; color: #721c24; }
 
-        .auth-section {
-            background: #e3f2fd;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
         }
 
-        .auth-btn {
-            background: #1976d2;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
+        .settings-card {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid #e9ecef;
+        }
+
+        .settings-card h3 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .list-item span {
+            flex-grow: 1;
+        }
+
+        .add-item-form {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .add-item-input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
             -webkit-appearance: none;
         }
 
@@ -343,6 +390,14 @@
             .filter-bar {
                 flex-direction: column;
             }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .add-item-form {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
@@ -350,23 +405,17 @@
     <div class="container">
         <div class="header">
             <h1>🏝️ Отчетность менеджера острова</h1>
-            <p>Система контроля и мониторинга проблем (Safari Edition)</p>
+            <p>Система контроля и мониторинга проблем</p>
         </div>
 
         <div class="nav">
             <button class="nav-btn active" onclick="showSection('report')">📝 Новая проблема</button>
             <button class="nav-btn" onclick="showSection('monitor')">👁️ Мониторинг</button>
             <button class="nav-btn" onclick="showSection('stats')">📊 Статистика</button>
+            <button class="nav-btn" onclick="showSection('settings')">⚙️ Настройки</button>
         </div>
 
         <div class="content">
-            <!-- Секция авторизации -->
-            <div id="auth" class="auth-section" style="display: none;">
-                <h3>Подключение к Google Sheets</h3>
-                <p>Для сохранения данных нужно подключиться к Google Sheets</p>
-                <button class="auth-btn" onclick="initGoogleAuth()">🔑 Подключить Google Sheets</button>
-            </div>
-
             <!-- Раздел создания отчета -->
             <div id="report" class="section active">
                 <h2>Создание нового отчета о проблеме</h2>
@@ -376,15 +425,6 @@
                         <label for="location">Локация:</label>
                         <select id="location" required>
                             <option value="">Выберите локацию</option>
-                            <option value="Кухня">🍳 Кухня</option>
-                            <option value="Пляж">🏖️ Пляж</option>
-                            <option value="Бар">🍹 Бар</option>
-                            <option value="Ресепшн">🏨 Ресепшн</option>
-                            <option value="Номера">🛏️ Номера</option>
-                            <option value="Бассейн">🏊 Бассейн</option>
-                            <option value="Ресторан">🍽️ Ресторан</option>
-                            <option value="Территория">🌴 Территория</option>
-                            <option value="Другое">❓ Другое</option>
                         </select>
                     </div>
 
@@ -392,13 +432,6 @@
                         <label for="problemType">Тип проблемы:</label>
                         <select id="problemType" required>
                             <option value="">Выберите тип проблемы</option>
-                            <option value="Не готовится обязательное блюдо">Не готовится обязательное блюдо</option>
-                            <option value="Не убрались">Не убрались</option>
-                            <option value="Неисправность оборудования">Неисправность оборудования</option>
-                            <option value="Нехватка персонала">Нехватка персонала</option>
-                            <option value="Жалоба гостя">Жалоба гостя</option>
-                            <option value="Нарушение стандартов">Нарушение стандартов</option>
-                            <option value="Другое">Другое</option>
                         </select>
                     </div>
 
@@ -428,15 +461,6 @@
                 <div class="filter-bar">
                     <select class="filter-select" id="locationFilter" onchange="filterProblems()">
                         <option value="">Все локации</option>
-                        <option value="Кухня">🍳 Кухня</option>
-                        <option value="Пляж">🏖️ Пляж</option>
-                        <option value="Бар">🍹 Бар</option>
-                        <option value="Ресепшн">🏨 Ресепшн</option>
-                        <option value="Номера">🛏️ Номера</option>
-                        <option value="Бассейн">🏊 Бассейн</option>
-                        <option value="Ресторан">🍽️ Ресторан</option>
-                        <option value="Территория">🌴 Территория</option>
-                        <option value="Другое">❓ Другое</option>
                     </select>
 
                     <select class="filter-select" id="statusFilter" onchange="filterProblems()">
@@ -446,7 +470,7 @@
                         <option value="resolved">Решенные</option>
                     </select>
 
-                    <button class="btn" onclick="loadProblems()" style="margin-left: auto;">🔄 Обновить</button>
+                    <button class="btn" onclick="loadProblems()">🔄 Обновить</button>
                 </div>
 
                 <div id="problemsList" class="problems-grid">
@@ -476,36 +500,190 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Раздел настроек -->
+            <div id="settings" class="section">
+                <h2>Настройки системы</h2>
+                <div class="settings-grid">
+                    <!-- Настройки локаций -->
+                    <div class="settings-card">
+                        <h3>🏢 Локации</h3>
+                        <div id="locationsList"></div>
+                        <div class="add-item-form">
+                            <input type="text" id="newLocation" class="add-item-input" placeholder="Новая локация..." maxlength="50">
+                            <button class="btn" onclick="addLocation()">Добавить</button>
+                        </div>
+                    </div>
+
+                    <!-- Настройки типов проблем -->
+                    <div class="settings-card">
+                        <h3>🔧 Типы проблем</h3>
+                        <div id="problemTypesList"></div>
+                        <div class="add-item-form">
+                            <input type="text" id="newProblemType" class="add-item-input" placeholder="Новый тип проблемы..." maxlength="100">
+                            <button class="btn" onclick="addProblemType()">Добавить</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fff3cd; border-radius: 10px;">
+                    <h4>📋 Управление данными</h4>
+                    <p style="margin: 10px 0; color: #856404;">Здесь вы можете экспортировать данные или очистить систему:</p>
+                    <button class="btn btn-secondary" onclick="exportData()">📤 Экспортировать данные</button>
+                    <button class="btn btn-danger" onclick="clearAllData()">🗑️ Очистить все данные</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Google Sheets API -->
-    <script src="https://apis.google.com/js/api.js"></script>
     <script>
-        // Конфигурация Google Sheets API
-        const GOOGLE_SHEETS_CONFIG = {
-            apiKey: 'YOUR_API_KEY_HERE', // Заменить на ваш API ключ
-            clientId: 'YOUR_CLIENT_ID_HERE', // Заменить на ваш Client ID
-            discoveryDoc: 'https://sheets.googleapis.com/$discovery/rest?version=v4',
-            scope: 'https://www.googleapis.com/auth/spreadsheets',
-            spreadsheetId: '13yDK8r92q3My6RzJxJVhKmt2Y6MXnXoQG02rBr7uR7E'
-        };
+        // Настройки по умолчанию
+        const DEFAULT_LOCATIONS = [
+            'Кухня', 'Пляж', 'Бар', 'Ресепшн', 'Номера', 
+            'Бассейн', 'Ресторан', 'Территория', 'Другое'
+        ];
 
+        const DEFAULT_PROBLEM_TYPES = [
+            'Не готовится обязательное блюдо',
+            'Не убрались',
+            'Неисправность оборудования',
+            'Нехватка персонала',
+            'Жалоба гостя',
+            'Нарушение стандартов',
+            'Другое'
+        ];
+
+        // Глобальные переменные
         let problems = [];
+        let locations = [];
+        let problemTypes = [];
         let currentFilter = { location: '', status: '' };
-        let isGoogleApiLoaded = false;
-        let isAuthorized = false;
 
         // Инициализация при загрузке страницы
         window.onload = function() {
-            // Пока API не настроен, используем локальные данные
-            loadProblemsFromLocal();
-            
-            // Показываем секцию авторизации если нужно
-            if (!isAuthorized) {
-                document.getElementById('auth').style.display = 'block';
-            }
+            loadSettings();
+            loadProblems();
+            updateDropdowns();
+            displaySettings();
         };
+
+        // Загрузка настроек
+        function loadSettings() {
+            const savedLocations = localStorage.getItem('islandLocations');
+            const savedProblemTypes = localStorage.getItem('islandProblemTypes');
+            
+            locations = savedLocations ? JSON.parse(savedLocations) : [...DEFAULT_LOCATIONS];
+            problemTypes = savedProblemTypes ? JSON.parse(savedProblemTypes) : [...DEFAULT_PROBLEM_TYPES];
+        }
+
+        // Сохранение настроек
+        function saveSettings() {
+            localStorage.setItem('islandLocations', JSON.stringify(locations));
+            localStorage.setItem('islandProblemTypes', JSON.stringify(problemTypes));
+        }
+
+        // Обновление выпадающих списков
+        function updateDropdowns() {
+            // Обновляем локации в форме
+            const locationSelect = document.getElementById('location');
+            locationSelect.innerHTML = '<option value="">Выберите локацию</option>';
+            locations.forEach(location => {
+                locationSelect.innerHTML += `<option value="${location}">${location}</option>`;
+            });
+
+            // Обновляем типы проблем в форме
+            const problemTypeSelect = document.getElementById('problemType');
+            problemTypeSelect.innerHTML = '<option value="">Выберите тип проблемы</option>';
+            problemTypes.forEach(type => {
+                problemTypeSelect.innerHTML += `<option value="${type}">${type}</option>`;
+            });
+
+            // Обновляем фильтр локаций
+            const locationFilter = document.getElementById('locationFilter');
+            locationFilter.innerHTML = '<option value="">Все локации</option>';
+            locations.forEach(location => {
+                locationFilter.innerHTML += `<option value="${location}">${location}</option>`;
+            });
+        }
+
+        // Отображение настроек
+        function displaySettings() {
+            // Отображаем локации
+            const locationsList = document.getElementById('locationsList');
+            locationsList.innerHTML = locations.map((location, index) => `
+                <div class="list-item">
+                    <span>${location}</span>
+                    <button class="btn btn-danger" onclick="removeLocation(${index})" style="padding: 5px 10px; font-size: 12px;">Удалить</button>
+                </div>
+            `).join('');
+
+            // Отображаем типы проблем
+            const problemTypesList = document.getElementById('problemTypesList');
+            problemTypesList.innerHTML = problemTypes.map((type, index) => `
+                <div class="list-item">
+                    <span>${type}</span>
+                    <button class="btn btn-danger" onclick="removeProblemType(${index})" style="padding: 5px 10px; font-size: 12px;">Удалить</button>
+                </div>
+            `).join('');
+        }
+
+        // Добавление локации
+        function addLocation() {
+            const input = document.getElementById('newLocation');
+            const newLocation = input.value.trim();
+            
+            if (newLocation && !locations.includes(newLocation)) {
+                locations.push(newLocation);
+                saveSettings();
+                updateDropdowns();
+                displaySettings();
+                input.value = '';
+                showMessage('success', `Локация "${newLocation}" добавлена!`);
+            } else if (locations.includes(newLocation)) {
+                showMessage('error', 'Такая локация уже существует!');
+            }
+        }
+
+        // Удаление локации
+        function removeLocation(index) {
+            const location = locations[index];
+            if (confirm(`Удалить локацию "${location}"?`)) {
+                locations.splice(index, 1);
+                saveSettings();
+                updateDropdowns();
+                displaySettings();
+                showMessage('success', `Локация "${location}" удалена!`);
+            }
+        }
+
+        // Добавление типа проблемы
+        function addProblemType() {
+            const input = document.getElementById('newProblemType');
+            const newType = input.value.trim();
+            
+            if (newType && !problemTypes.includes(newType)) {
+                problemTypes.push(newType);
+                saveSettings();
+                updateDropdowns();
+                displaySettings();
+                input.value = '';
+                showMessage('success', `Тип проблемы "${newType}" добавлен!`);
+            } else if (problemTypes.includes(newType)) {
+                showMessage('error', 'Такой тип проблемы уже существует!');
+            }
+        }
+
+        // Удаление типа проблемы
+        function removeProblemType(index) {
+            const type = problemTypes[index];
+            if (confirm(`Удалить тип проблемы "${type}"?`)) {
+                problemTypes.splice(index, 1);
+                saveSettings();
+                updateDropdowns();
+                displaySettings();
+                showMessage('success', `Тип проблемы "${type}" удален!`);
+            }
+        }
 
         // Переключение разделов
         function showSection(sectionId) {
@@ -524,11 +702,23 @@
                 displayProblems();
             } else if (sectionId === 'stats') {
                 updateStats();
+            } else if (sectionId === 'settings') {
+                displaySettings();
             }
         }
 
-        // Временная функция загрузки из localStorage
-        function loadProblemsFromLocal() {
+        // Показ сообщений
+        function showMessage(type, message) {
+            const messageDiv = document.getElementById('reportMessage');
+            const className = type === 'success' ? 'success' : 'error';
+            messageDiv.innerHTML = `<div class="${className}">${message}</div>`;
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+        }
+
+        // Загрузка проблем
+        function loadProblems() {
             const stored = localStorage.getItem('islandProblems');
             if (stored) {
                 problems = JSON.parse(stored);
@@ -537,8 +727,8 @@
             updateStats();
         }
 
-        // Временная функция сохранения в localStorage
-        function saveProblemsToLocal() {
+        // Сохранение проблем
+        function saveProblems() {
             localStorage.setItem('islandProblems', JSON.stringify(problems));
         }
 
@@ -547,7 +737,6 @@
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
-            const messageDiv = document.getElementById('reportMessage');
             
             submitBtn.disabled = true;
             submitBtn.textContent = 'Сохранение...';
@@ -566,31 +755,16 @@
             };
             
             problems.push(problem);
-            saveProblemsToLocal();
+            saveProblems();
             
             submitBtn.disabled = false;
             submitBtn.textContent = '✅ Создать отчет';
             
-            messageDiv.innerHTML = '<div class="success">✅ Отчет о проблеме создан успешно!</div>';
+            showMessage('success', '✅ Отчет о проблеме создан успешно!');
             this.reset();
-            
-            setTimeout(() => {
-                messageDiv.innerHTML = '';
-            }, 3000);
             
             updateStats();
         });
-
-        // Загрузка проблем
-        function loadProblems() {
-            if (isAuthorized) {
-                // Загрузка из Google Sheets (когда настроим API)
-                loadProblemsFromGoogleSheets();
-            } else {
-                // Загрузка из localStorage
-                loadProblemsFromLocal();
-            }
-        }
 
         // Решение проблемы
         function resolveProblem(problemId) {
@@ -599,7 +773,7 @@
                 problem.status = 'resolved';
                 problem.resolved = true;
                 problem.resolvedDate = new Date().toISOString().split('T')[0];
-                saveProblemsToLocal();
+                saveProblems();
                 displayProblems();
                 updateStats();
             }
@@ -705,6 +879,51 @@
             document.getElementById('resolvedProblems').textContent = resolved;
         }
 
+        // Экспорт данных
+        function exportData() {
+            const data = {
+                problems: problems,
+                locations: locations,
+                problemTypes: problemTypes,
+                exportDate: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `island-reports-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('success', 'Данные экспортированы!');
+        }
+
+        // Очистка всех данных
+        function clearAllData() {
+            if (confirm('⚠️ Вы уверены, что хотите удалить ВСЕ данные?\n\nЭто действие нельзя отменить!')) {
+                if (confirm('🚨 ПОСЛЕДНЕЕ ПРЕДУПРЕЖДЕНИЕ!\n\nВсе отчеты, настройки и данные будут удалены навсегда!')) {
+                    localStorage.removeItem('islandProblems');
+                    localStorage.removeItem('islandLocations');
+                    localStorage.removeItem('islandProblemTypes');
+                    
+                    problems = [];
+                    locations = [...DEFAULT_LOCATIONS];
+                    problemTypes = [...DEFAULT_PROBLEM_TYPES];
+                    
+                    saveSettings();
+                    updateDropdowns();
+                    displaySettings();
+                    displayProblems();
+                    updateStats();
+                    
+                    showMessage('success', 'Все данные удалены. Настройки сброшены к умолчанию.');
+                }
+            }
+        }
+
         // Вспомогательные функции
         function getDaysSinceReport(dateStr) {
             const reportDate = new Date(dateStr);
@@ -726,22 +945,18 @@
             return date.toLocaleDateString('ru-RU');
         }
 
-        // Инициализация Google API (заглушка)
-        function initGoogleAuth() {
-            alert('Пока работает в локальном режиме. Данные сохраняются в браузере.\n\nДля подключения к Google Sheets нужно настроить API ключи.');
-            document.getElementById('auth').style.display = 'none';
-        }
+        // Обработка Enter в полях добавления
+        document.getElementById('newLocation').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addLocation();
+            }
+        });
 
-        // Заглушки для будущего подключения к Google Sheets
-        function loadProblemsFromGoogleSheets() {
-            // Здесь будет код для загрузки из Google Sheets
-            console.log('Загрузка из Google Sheets...');
-        }
-
-        function saveProblemsToGoogleSheets() {
-            // Здесь будет код для сохранения в Google Sheets  
-            console.log('Сохранение в Google Sheets...');
-        }
+        document.getElementById('newProblemType').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addProblemType();
+            }
+        });
     </script>
 </body>
 </html>
