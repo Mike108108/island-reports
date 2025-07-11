@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Отчетность менеджера острова</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .nav-btn {
+            padding: 12px 25px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .nav-btn.active {
+            background: #007bff;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:hover {
+            background: #5a6268;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn.active:hover {
+            background: #0056b3;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            -webkit-appearance: none;
+            background: white;
+        }
+
+        .form-group select:focus,
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .btn:hover {
+            background: #218838;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .problems-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .problem-card {
+            background: #fff;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .problem-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .problem-date {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .problem-location {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .problem-description {
+            color: #666;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .problem-actions {
+            color: #28a745;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+
+        .resolve-btn {
+            background: #ffc107;
+            color: #333;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+        }
+
+        .resolve-btn:hover {
+            background: #e0a800;
+        }
+
+        .resolve-btn:disabled {
+            background: #6c757d;
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            background: white;
+            -webkit-appearance: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .days-counter {
+            float: right;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+        }
+
+        .days-1 { background: #fff3cd; color: #856404; }
+        .days-2 { background: #ffeaa7; color: #856404; }
+        .days-3 { background: #fab1a0; color: #721c24; }
+        .days-4 { background: #ff7675; color: #721c24; }
+
+        .auth-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .auth-btn {
+            background: #1976d2;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            -webkit-appearance: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .problems-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏝️ Отчетность менеджера острова</h1>
+            <p>Система контроля и мониторинга проблем (Safari Edition)</p>
+        </div>
+
+        <div class="nav">
+            <button class="nav-btn active" onclick="showSection('report')">📝 Новая проблема</button>
+            <button class="nav-btn" onclick="showSection('monitor')">👁️ Мониторинг</button>
+            <button class="nav-btn" onclick="showSection('stats')">📊 Статистика</button>
+        </div>
+
+        <div class="content">
+            <!-- Секция авторизации -->
+            <div id="auth" class="auth-section" style="display: none;">
+                <h3>Подключение к Google Sheets</h3>
+                <p>Для сохранения данных нужно подключиться к Google Sheets</p>
+                <button class="auth-btn" onclick="initGoogleAuth()">🔑 Подключить Google Sheets</button>
+            </div>
+
+            <!-- Раздел создания отчета -->
+            <div id="report" class="section active">
+                <h2>Создание нового отчета о проблеме</h2>
+                <div id="reportMessage"></div>
+                <form id="problemForm">
+                    <div class="form-group">
+                        <label for="location">Локация:</label>
+                        <select id="location" required>
+                            <option value="">Выберите локацию</option>
+                            <option value="Кухня">🍳 Кухня</option>
+                            <option value="Пляж">🏖️ Пляж</option>
+                            <option value="Бар">🍹 Бар</option>
+                            <option value="Ресепшн">🏨 Ресепшн</option>
+                            <option value="Номера">🛏️ Номера</option>
+                            <option value="Бассейн">🏊 Бассейн</option>
+                            <option value="Ресторан">🍽️ Ресторан</option>
+                            <option value="Территория">🌴 Территория</option>
+                            <option value="Другое">❓ Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="problemType">Тип проблемы:</label>
+                        <select id="problemType" required>
+                            <option value="">Выберите тип проблемы</option>
+                            <option value="Не готовится обязательное блюдо">Не готовится обязательное блюдо</option>
+                            <option value="Не убрались">Не убрались</option>
+                            <option value="Неисправность оборудования">Неисправность оборудования</option>
+                            <option value="Нехватка персонала">Нехватка персонала</option>
+                            <option value="Жалоба гостя">Жалоба гостя</option>
+                            <option value="Нарушение стандартов">Нарушение стандартов</option>
+                            <option value="Другое">Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Описание проблемы:</label>
+                        <textarea id="description" placeholder="Опишите подробно суть проблемы..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="actions">Предпринятые действия:</label>
+                        <textarea id="actions" placeholder="Какие действия были предприняты для решения проблемы?" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="manager">Менеджер:</label>
+                        <input type="text" id="manager" placeholder="Ваше имя" required>
+                    </div>
+
+                    <button type="submit" class="btn" id="submitBtn">✅ Создать отчет</button>
+                </form>
+            </div>
+
+            <!-- Раздел мониторинга -->
+            <div id="monitor" class="section">
+                <h2>Мониторинг активных проблем</h2>
+                
+                <div class="filter-bar">
+                    <select class="filter-select" id="locationFilter" onchange="filterProblems()">
+                        <option value="">Все локации</option>
+                        <option value="Кухня">🍳 Кухня</option>
+                        <option value="Пляж">🏖️ Пляж</option>
+                        <option value="Бар">🍹 Бар</option>
+                        <option value="Ресепшн">🏨 Ресепшн</option>
+                        <option value="Номера">🛏️ Номера</option>
+                        <option value="Бассейн">🏊 Бассейн</option>
+                        <option value="Ресторан">🍽️ Ресторан</option>
+                        <option value="Территория">🌴 Территория</option>
+                        <option value="Другое">❓ Другое</option>
+                    </select>
+
+                    <select class="filter-select" id="statusFilter" onchange="filterProblems()">
+                        <option value="">Все статусы</option>
+                        <option value="active">Активные</option>
+                        <option value="critical">Критические (3+ дня)</option>
+                        <option value="resolved">Решенные</option>
+                    </select>
+
+                    <button class="btn" onclick="loadProblems()" style="margin-left: auto;">🔄 Обновить</button>
+                </div>
+
+                <div id="problemsList" class="problems-grid">
+                    <div class="loading">Загрузка данных...</div>
+                </div>
+            </div>
+
+            <!-- Раздел статистики -->
+            <div id="stats" class="section">
+                <h2>Статистика проблем</h2>
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalProblems">0</div>
+                        <div class="stat-label">Всего проблем</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeProblems">0</div>
+                        <div class="stat-label">Активных проблем</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="criticalProblems">0</div>
+                        <div class="stat-label">Критических проблем</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="resolvedProblems">0</div>
+                        <div class="stat-label">Решенных проблем</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Google Sheets API -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script>
+        // Конфигурация Google Sheets API
+        const GOOGLE_SHEETS_CONFIG = {
+            apiKey: 'YOUR_API_KEY_HERE', // Заменить на ваш API ключ
+            clientId: 'YOUR_CLIENT_ID_HERE', // Заменить на ваш Client ID
+            discoveryDoc: 'https://sheets.googleapis.com/$discovery/rest?version=v4',
+            scope: 'https://www.googleapis.com/auth/spreadsheets',
+            spreadsheetId: '13yDK8r92q3My6RzJxJVhKmt2Y6MXnXoQG02rBr7uR7E'
+        };
+
+        let problems = [];
+        let currentFilter = { location: '', status: '' };
+        let isGoogleApiLoaded = false;
+        let isAuthorized = false;
+
+        // Инициализация при загрузке страницы
+        window.onload = function() {
+            // Пока API не настроен, используем локальные данные
+            loadProblemsFromLocal();
+            
+            // Показываем секцию авторизации если нужно
+            if (!isAuthorized) {
+                document.getElementById('auth').style.display = 'block';
+            }
+        };
+
+        // Переключение разделов
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (sectionId === 'monitor') {
+                displayProblems();
+            } else if (sectionId === 'stats') {
+                updateStats();
+            }
+        }
+
+        // Временная функция загрузки из localStorage
+        function loadProblemsFromLocal() {
+            const stored = localStorage.getItem('islandProblems');
+            if (stored) {
+                problems = JSON.parse(stored);
+            }
+            displayProblems();
+            updateStats();
+        }
+
+        // Временная функция сохранения в localStorage
+        function saveProblemsToLocal() {
+            localStorage.setItem('islandProblems', JSON.stringify(problems));
+        }
+
+        // Обработка формы создания проблемы
+        document.getElementById('problemForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            const messageDiv = document.getElementById('reportMessage');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Сохранение...';
+            
+            const problem = {
+                id: Date.now(),
+                date: new Date().toISOString().split('T')[0],
+                location: document.getElementById('location').value,
+                problemType: document.getElementById('problemType').value,
+                description: document.getElementById('description').value,
+                actions: document.getElementById('actions').value,
+                manager: document.getElementById('manager').value,
+                status: 'active',
+                resolved: false,
+                resolvedDate: null
+            };
+            
+            problems.push(problem);
+            saveProblemsToLocal();
+            
+            submitBtn.disabled = false;
+            submitBtn.textContent = '✅ Создать отчет';
+            
+            messageDiv.innerHTML = '<div class="success">✅ Отчет о проблеме создан успешно!</div>';
+            this.reset();
+            
+            setTimeout(() => {
+                messageDiv.innerHTML = '';
+            }, 3000);
+            
+            updateStats();
+        });
+
+        // Загрузка проблем
+        function loadProblems() {
+            if (isAuthorized) {
+                // Загрузка из Google Sheets (когда настроим API)
+                loadProblemsFromGoogleSheets();
+            } else {
+                // Загрузка из localStorage
+                loadProblemsFromLocal();
+            }
+        }
+
+        // Решение проблемы
+        function resolveProblem(problemId) {
+            const problem = problems.find(p => p.id == problemId);
+            if (problem) {
+                problem.status = 'resolved';
+                problem.resolved = true;
+                problem.resolvedDate = new Date().toISOString().split('T')[0];
+                saveProblemsToLocal();
+                displayProblems();
+                updateStats();
+            }
+        }
+
+        // Отображение проблем
+        function displayProblems() {
+            const container = document.getElementById('problemsList');
+            
+            if (!problems || problems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 1.2rem; margin-top: 40px;">Проблемы не найдены</p>';
+                return;
+            }
+            
+            let filteredProblems = problems.filter(problem => {
+                let matchLocation = !currentFilter.location || problem.location === currentFilter.location;
+                let matchStatus = true;
+                
+                if (currentFilter.status === 'active') {
+                    matchStatus = problem.status === 'active';
+                } else if (currentFilter.status === 'critical') {
+                    matchStatus = problem.status === 'active' && getDaysSinceReport(problem.date) >= 3;
+                } else if (currentFilter.status === 'resolved') {
+                    matchStatus = problem.status === 'resolved';
+                }
+                
+                return matchLocation && matchStatus;
+            });
+            
+            filteredProblems.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (filteredProblems.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #666; font-size: 1.2rem; margin-top: 40px;">Проблемы не найдены</p>';
+                return;
+            }
+            
+            container.innerHTML = filteredProblems.map(problem => {
+                const daysSince = getDaysSinceReport(problem.date);
+                const daysClass = daysSince >= 4 ? 'days-4' : `days-${daysSince}`;
+                const isResolved = problem.status === 'resolved';
+                
+                return `
+                    <div class="problem-card">
+                        <div class="problem-header">
+                            <div class="problem-title">${problem.problemType}</div>
+                            <div class="problem-date">${formatDate(problem.date)}</div>
+                        </div>
+                        
+                        <div class="problem-location">${problem.location}</div>
+                        
+                        <div class="problem-description">
+                            <strong>Описание:</strong> ${problem.description}
+                        </div>
+                        
+                        <div class="problem-actions">
+                            <strong>Действия:</strong> ${problem.actions}
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                ${!isResolved ? 
+                                    `<button class="resolve-btn" onclick="resolveProblem(${problem.id})">
+                                        ✅ Решено
+                                    </button>` : 
+                                    `<span style="color: #28a745; font-weight: 500;">Решено ${formatDate(problem.resolvedDate)}</span>`
+                                }
+                            </div>
+                            
+                            ${!isResolved ? 
+                                `<div class="days-counter ${daysClass}">
+                                    ${daysSince} ${getDaysText(daysSince)}
+                                    ${daysSince >= 3 ? ' ⚠️' : ''}
+                                </div>` : 
+                                ''
+                            }
+                        </div>
+                        
+                        <div style="margin-top: 10px; font-size: 0.9rem; color: #666;">
+                            Менеджер: ${problem.manager}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Фильтрация проблем
+        function filterProblems() {
+            currentFilter.location = document.getElementById('locationFilter').value;
+            currentFilter.status = document.getElementById('statusFilter').value;
+            displayProblems();
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const total = problems.length;
+            const active = problems.filter(p => p.status === 'active').length;
+            const critical = problems.filter(p => p.status === 'active' && getDaysSinceReport(p.date) >= 3).length;
+            const resolved = problems.filter(p => p.status === 'resolved').length;
+            
+            document.getElementById('totalProblems').textContent = total;
+            document.getElementById('activeProblems').textContent = active;
+            document.getElementById('criticalProblems').textContent = critical;
+            document.getElementById('resolvedProblems').textContent = resolved;
+        }
+
+        // Вспомогательные функции
+        function getDaysSinceReport(dateStr) {
+            const reportDate = new Date(dateStr);
+            const today = new Date();
+            const diffTime = Math.abs(today - reportDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        function getDaysText(days) {
+            if (days === 1) return 'день';
+            if (days >= 2 && days <= 4) return 'дня';
+            return 'дней';
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('ru-RU');
+        }
+
+        // Инициализация Google API (заглушка)
+        function initGoogleAuth() {
+            alert('Пока работает в локальном режиме. Данные сохраняются в браузере.\n\nДля подключения к Google Sheets нужно настроить API ключи.');
+            document.getElementById('auth').style.display = 'none';
+        }
+
+        // Заглушки для будущего подключения к Google Sheets
+        function loadProblemsFromGoogleSheets() {
+            // Здесь будет код для загрузки из Google Sheets
+            console.log('Загрузка из Google Sheets...');
+        }
+
+        function saveProblemsToGoogleSheets() {
+            // Здесь будет код для сохранения в Google Sheets  
+            console.log('Сохранение в Google Sheets...');
+        }
+    </script>
+</body>
+</html>
